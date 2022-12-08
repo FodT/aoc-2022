@@ -8,9 +8,8 @@ import (
 )
 
 type Tree struct {
-	Height     int
-	Visible    bool
-	SceneScore int
+	Height  int
+	Visible bool
 }
 
 func main() {
@@ -24,9 +23,8 @@ func main() {
 		for i, c := range line {
 			height, _ := strconv.Atoi(string(c))
 			row[i] = Tree{
-				Height:     height,
-				Visible:    false,
-				SceneScore: 0,
+				Height:  height,
+				Visible: false,
 			}
 		}
 		grid = append(grid, row)
@@ -41,29 +39,34 @@ func sceneScore(grid [][]Tree) int {
 	maxScene := 0
 	maxCols := len(grid[0])
 	maxRows := len(grid)
-	for r, row := range grid {
-		for c, tree := range row {
+	for r := 0; r < maxRows; r++ {
+		for c := 0; c < maxCols; c++ {
 			score := 1
-			refHeight := tree.Height
+			refHeight := grid[r][c].Height
 			numCanSee := 0
 			// search right
 			for i := c + 1; i < maxCols; i++ {
 				numCanSee++
-				if row[i].Height >= refHeight {
+				if grid[r][i].Height >= refHeight {
 					break
 				}
 			}
 			score *= numCanSee
+			if score == 0 {
+				continue
+			}
 			numCanSee = 0
 			// search left
 			for i := c - 1; i >= 0; i-- {
 				numCanSee++
-				if row[i].Height >= refHeight {
+				if grid[r][i].Height >= refHeight {
 					break
 				}
 			}
 			score *= numCanSee
-
+			if score == 0 {
+				continue
+			}
 			numCanSee = 0
 			// search down
 			for i := r + 1; i < maxRows; i++ {
@@ -73,6 +76,9 @@ func sceneScore(grid [][]Tree) int {
 				}
 			}
 			score *= numCanSee
+			if score == 0 {
+				continue
+			}
 
 			numCanSee = 0
 			// search up
@@ -83,6 +89,9 @@ func sceneScore(grid [][]Tree) int {
 				}
 			}
 			score *= numCanSee
+			if score == 0 {
+				continue
+			}
 
 			//fmt.Printf("score for %d,%d,: %d\n", r, c, score)
 			if score >= maxScene {
