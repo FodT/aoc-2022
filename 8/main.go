@@ -12,6 +12,36 @@ type Tree struct {
 	Visible bool
 }
 
+func nextRight(r int, c int, rMax int, cMax int) (int, int, bool) {
+	return r, c + 1, c < cMax-1
+}
+
+func nextLeft(r int, c int, rMax int, cMax int) (int, int, bool) {
+	return r, c - 1, c > 0
+}
+
+func nextDown(r int, c int, rMax int, cMax int) (int, int, bool) {
+	return r + 1, c, r < rMax-1
+}
+
+func nextUp(r int, c int, rMax int, cMax int) (int, int, bool) {
+	return r - 1, c, r > 0
+}
+
+func countFrom(grid [][]Tree, i int, j int, iter func(int, int, int, int) (int, int, bool)) int {
+	count := 0
+	refHeight := grid[i][j].Height
+	maxCols := len(grid[0])
+	maxRows := len(grid)
+	for r, c, cont := iter(i, j, maxRows, maxCols); cont; r, c, cont = iter(r, c, maxRows, maxCols) {
+		count++
+		if grid[r][c].Height >= refHeight {
+			break
+		}
+	}
+	return count
+}
+
 func main() {
 
 	scanner := bufio.NewScanner(strings.NewReader(Input))
@@ -42,58 +72,27 @@ func sceneScore(grid [][]Tree) int {
 	for r := 0; r < maxRows; r++ {
 		for c := 0; c < maxCols; c++ {
 			score := 1
-			refHeight := grid[r][c].Height
-			numCanSee := 0
-			// search right
-			for i := c + 1; i < maxCols; i++ {
-				numCanSee++
-				if grid[r][i].Height >= refHeight {
-					break
-				}
-			}
-			score *= numCanSee
-			if score == 0 {
-				continue
-			}
-			numCanSee = 0
-			// search left
-			for i := c - 1; i >= 0; i-- {
-				numCanSee++
-				if grid[r][i].Height >= refHeight {
-					break
-				}
-			}
-			score *= numCanSee
-			if score == 0 {
-				continue
-			}
-			numCanSee = 0
-			// search down
-			for i := r + 1; i < maxRows; i++ {
-				numCanSee++
-				if grid[i][c].Height >= refHeight {
-					break
-				}
-			}
-			score *= numCanSee
+
+			score *= countFrom(grid, r, c, nextRight)
 			if score == 0 {
 				continue
 			}
 
-			numCanSee = 0
-			// search up
-			for i := r - 1; i >= 0; i-- {
-				numCanSee++
-				if grid[i][c].Height >= refHeight {
-					break
-				}
-			}
-			score *= numCanSee
+			score *= countFrom(grid, r, c, nextLeft)
 			if score == 0 {
 				continue
 			}
 
-			//fmt.Printf("score for %d,%d,: %d\n", r, c, score)
+			score *= countFrom(grid, r, c, nextDown)
+			if score == 0 {
+				continue
+			}
+
+			score *= countFrom(grid, r, c, nextUp)
+			if score == 0 {
+				continue
+			}
+
 			if score >= maxScene {
 				maxScene = score
 			}
