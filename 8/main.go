@@ -89,10 +89,6 @@ func sceneScore(grid [][]Tree) int {
 			}
 
 			score *= countFrom(grid, r, c, nextUp)
-			if score == 0 {
-				continue
-			}
-
 			if score >= maxScene {
 				maxScene = score
 			}
