@@ -14,7 +14,6 @@ func main() {
 	total := 0
 	regX = 1
 	for scanner.Scan() {
-
 		line := scanner.Text()
 		var val int
 		ticks := 1
@@ -51,7 +50,6 @@ func addX(ticks int, incr int) int {
 	return signal
 }
 
-// Abs returns the absolute value of x.
 func Abs(x int) int {
 	if x < 0 {
 		return -x
