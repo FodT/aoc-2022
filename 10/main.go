@@ -11,7 +11,6 @@ var regX int
 
 func main() {
 	scanner := bufio.NewScanner(strings.NewReader(Input))
-	programCounter = 0
 	total := 0
 	regX = 1
 	for scanner.Scan() {
@@ -24,7 +23,6 @@ func main() {
 			fmt.Sscanf(line, "addx %d", &val)
 		}
 		total += addX(ticks, val)
-
 	}
 
 	fmt.Printf("\n\nPart 1 Total: %d\n", total)
@@ -48,7 +46,6 @@ func addX(ticks int, incr int) int {
 		if (programCounter-20)%40 == 0 {
 			signal = regX * programCounter
 		}
-
 	}
 	regX += incr
 	return signal
