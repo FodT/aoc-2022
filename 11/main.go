@@ -22,44 +22,43 @@ type Monkey struct {
 	inspectionCount int
 }
 
-var monkeys map[int]*Monkey
-
 func (m *Monkey) giveItem(i Item) {
 	m.itemsHeld = append(m.itemsHeld, i)
 }
 
 func main() {
-	monkeys = make(map[int]*Monkey)
+	monkeys := make(map[int]*Monkey)
 	in := strings.Split(Input, "\n\n")
+	lcm := 1
 	for _, mIn := range in {
 		monkey := parseMonkey(mIn)
+		lcm *= monkey.testDenominator
 		monkeys[monkey.Id] = monkey
 	}
 
 	fmt.Println(monkeys)
 
-	rounds := 20
+	rounds := 1000
+	rounds = 10000
 
 	for i := 0; i < rounds; i++ {
 		for j := 0; j < len(monkeys); j++ {
-			monkeys[j].MonkeyAround()
+			monkeys[j].MonkeyAround(monkeys, lcm)
 		}
+
 	}
 
-	for _, m := range monkeys {
-		fmt.Printf("monkey %d inspected %d items\n", m.Id, m.inspectionCount)
-	}
-
-	fmt.Printf("total monkey business: %d\n", calculateMonkeyBusiness())
+	fmt.Printf("total monkey business: %d\n", calculateMonkeyBusiness(monkeys))
 }
 
-func (m *Monkey) MonkeyAround() {
+func (m *Monkey) MonkeyAround(monkeys map[int]*Monkey, lcm int) {
 	newItems := make([]Item, 0)
 	for i, _ := range m.itemsHeld {
 		m.inspectionCount++
 		m.itemsHeld[i].WorryScore = m.operationFunc(m.itemsHeld[i].WorryScore)
-		m.itemsHeld[i].WorryScore /= 3
-		if m.itemsHeld[i].WorryScore%m.testDenominator == 0 {
+		m.itemsHeld[i].WorryScore = m.itemsHeld[i].WorryScore % lcm
+		remainder := m.itemsHeld[i].WorryScore % m.testDenominator
+		if remainder == 0 {
 			monkeys[m.trueMonkey].giveItem(m.itemsHeld[i])
 		} else {
 			monkeys[m.falseMonkey].giveItem(m.itemsHeld[i])
@@ -68,7 +67,7 @@ func (m *Monkey) MonkeyAround() {
 	m.itemsHeld = newItems
 }
 
-func calculateMonkeyBusiness() int {
+func calculateMonkeyBusiness(monkeys map[int]*Monkey) int {
 	v := make([]*Monkey, 0, len(monkeys))
 
 	for _, value := range monkeys {
@@ -78,6 +77,10 @@ func calculateMonkeyBusiness() int {
 	sort.Slice(v, func(i, j int) bool {
 		return v[i].inspectionCount > v[j].inspectionCount
 	})
+
+	for _, m := range v {
+		fmt.Printf("monkey %d inspected %d items\n", m.Id, m.inspectionCount)
+	}
 
 	return v[0].inspectionCount * v[1].inspectionCount
 
