@@ -49,6 +49,8 @@ func main() {
 			drawLine(c1, c2, Rock, &cave)
 		}
 	}
+
+	// deep copy cave structure because lol
 	cave2 := cave
 	cave2.Structure = make(map[Coordinates]Material)
 	for k, v := range cave.Structure {
@@ -57,21 +59,19 @@ func main() {
 
 	voidOutCave(&cave)
 
-	count := 0
-
+	count1 := 0
 	for {
 		err := sandfall(Coordinates{500, 0}, &cave)
 		if err != nil {
 			break
 		}
-		count++
+		count1++
 	}
 
-	fmt.Printf("p1 sand count:= %d\n", count)
+	fmt.Printf("p1 sand count1:= %d\n", count1)
 
 	addFloorToCave(&cave2)
 	voidOutCave(&cave2)
-
 	count2 := 0
 	for {
 		err := sandfall(Coordinates{500, 0}, &cave2)
@@ -81,8 +81,7 @@ func main() {
 		count2++
 	}
 
-	fmt.Printf("p2 sand count:= %d\n", count2)
-
+	fmt.Printf("p2 sand count1:= %d\n", count2)
 }
 
 func sandfall(c Coordinates, cave *Cave) error {
