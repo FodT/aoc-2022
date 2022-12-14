@@ -68,7 +68,7 @@ func main() {
 		count1++
 	}
 
-	fmt.Printf("p1 sand count1:= %d\n", count1)
+	fmt.Printf("p1 sand count:= %d\n", count1)
 
 	addFloorToCave(&cave2)
 	voidOutCave(&cave2)
@@ -81,7 +81,7 @@ func main() {
 		count2++
 	}
 
-	fmt.Printf("p2 sand count1:= %d\n", count2)
+	fmt.Printf("p2 sand count:= %d\n", count2)
 }
 
 func sandfall(c Coordinates, cave *Cave) error {
